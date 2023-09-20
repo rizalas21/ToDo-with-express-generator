@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> BREAD (Browse, Read, Edit, Add, Delete, Sort) </title>
-    <link rel="stylesheet" href="../../public/stylesheets/todos.css">
+    <link rel="stylesheet" href="/stylesheets/todos.css">
 </head>
 
 <body>
@@ -17,7 +17,7 @@
         <h1>BREADS (Browse, Read, Edit, Add, Delete, Sort)</h1>
         <div class="container-form">
             <!-- ini fitur search -->
-            <form action="/" method="get" class="add-container">
+            <form action="/users" method="get" class="add-container">
                 <div class="form-list">
                     <div class="inline">
                         <label for="name">title</label>
@@ -39,7 +39,7 @@
 
                     <div class="container-married">
                         <label for="complete">complete</label>
-                        <!-- <%if(query.complete=='1' ){ %>
+                        <%if(query.complete=='1' ){ %>
                             <div class="inline">
                                 <select name="married" id="married" placeholder="-select complete-">
                                     <option value="" selected>Yes</option>
@@ -60,12 +60,12 @@
                                             <option value="0">Not Yet</option>
                                         </select>
                                     </div>
-                                    <% } %> -->
+                                    <% } %>
                     </div>
 
                     <div class="container-operation">
                         <legend>Operation</legend>
-                        <!-- <% if(query.type_search=='OR' ) { %>
+                        <% if(query.type_search=='OR' ) { %>
                             <div class="operation-input">
                                 <div class="input-radio">
                                     <input type="radio" id="OR" name="type_search" value="OR" checked= />OR
@@ -88,12 +88,12 @@
                                             <input type="radio" id="AND" name="type_search" value="AND" />AND
                                         </div>
                                     </div>
-                                    <% } %> -->
+                                    <% } %>
                     </div>
                     <!-- trakhir submit mahh -->
                     <div class="button-add">
                         <button type="submit" class="add-submit">search</button>&nbsp;
-                        <a class="add-cancel" href="/">reset</a>
+                        <a class="add-cancel" href="/users">reset</a>
                     </div>
                 </div>
             </form>
@@ -114,39 +114,39 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <% data.forEach((siswa, index)=> { %> -->
+                        <% data.forEach((siswa, index)=> { %>
                             <tr>
                                 <td>
-                                    <!-- <%= index + offset + 1 %> -->
+                                    <%= index + offset + 1 %>
                                 </td>
                                 <td>
-                                    <!-- <%= siswa.name %> -->
+                                    <%= siswa.name %>
                                 </td>
                                 <td>
-                                    <!-- <%= siswa.height %> -->
+                                    <%= siswa.height %>
                                 </td>
                                 <td>
-                                    <!-- <%= siswa.weight %> -->
+                                    <%= siswa.weight %>
                                 </td>
                                 <td>
-                                    <!-- <%= siswa.birthdate %> -->
+                                    <%= siswa.birthdate %>
                                 </td>
                                 <td>
-                                    <!-- <%= siswa.married ? 'Yes' : 'Not Yet' %> -->
+                                    <%= siswa.married ? 'Yes' : 'Not Yet' %>
                                 </td>
-                                <td><a class="button-update" href="/edit/<%= siswa.id %>">Update</a>&nbsp;
+                                <td><a class="button-update" href="/users/edit/<%= siswa.id %>">Update</a>&nbsp;
                                     <a class="button-delete" href="/delete/<%= siswa.id %>"
                                         onclick="return confirmation('<%= siswa.name %>')">Delete</a>
                                 </td>
                             </tr>
-                            <!-- <% }) %> -->
+                            <% }) %>
                     </tbody>
                 </table>
             </div>
             <div class="container-button">
-                <a href="/add" class="add-list">Add</a>
+                <a href="/users/add" class="add-list">Add</a>
                 <div class="pagination">
-                    <!-- <% if(page !=1) { %>
+                    <% if(page !=1) { %>
                         <a href="?page=<%= page - 1%>">&laquo;</a>
                         <% } %>
                             <% for(let i=1; i <=pages; i++){%>
@@ -156,7 +156,7 @@
                                 <% } %>
                                     <% if(page !=pages) { %>
                                         <a href="?page=<%= Number(page) + 1%>">&raquo;</a>
-                                        <% } %> -->
+                                        <% } %>
                 </div>
 
             </div>

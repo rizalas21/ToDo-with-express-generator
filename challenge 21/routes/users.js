@@ -1,16 +1,16 @@
 var express = require('express');
 var router = express.Router();
+const moment = require('moment')
+const path = require('path')
+const fs = require('fs')
 
 module.exports = function (db) {
 router.get('/', (req, res) => { //create router read
   const { page = 1, title, startdate, enddate, complete, type_search } = req.query
-
-  const limit = 3
-  const offset = (page - 1) * 3
-
+  const limit = 5
+  const offset = (page - 1) * 5
   const queries = []
   const params = []
-
   const count = []
 
   if (title) {
@@ -61,7 +61,7 @@ router.get('/', (req, res) => { //create router read
 
     db.query(sql, params, (err, {rows : data}) => {
       if (err) res.render(err)
-      else res.render('users/home', { data, query: req.query, pages, offset, page })
+      else res.render('users/home', { data, query: req.query, pages, offset, page, moment })
     })
   })
 })
