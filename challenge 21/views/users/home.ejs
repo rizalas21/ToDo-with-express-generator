@@ -4,13 +4,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BREADS (Browse, Read, Edit, Add, Delete, Sort)</title>
+    <title> BREAD (Browse, Read, Edit, Add, Delete, Sort) </title>
+    <link rel="stylesheet" href="../../public/stylesheets/todos.css">
 </head>
 
 <body>
+    <div class="container-list">
+        <h1>SQLite BREAD(Browse, Read, Edit, Add, Delete)</h1>
+        <div class="container-form">
+            <!-- ini fitur search -->
+            <form action="/" method="get" class="add-container">
+                <div class="form-list">
+                    <div class="inline">
+                        <label for="name">title</label>
+                        <div class="container-input">
+                            <input type="text" class="add-box" name="title" placeholder="insert your title" />
+                        </div>
+                    </div>
 
-    div
+                    <div class="inline">
+                        <label for="deadline">deadline</label>
+                        <div class="container-input-birthdate">
+                            <input type="date" class="add-box" name='startdate' value="" />
+                            <div class="sd">
+                                <p> s.d </p>
+                            </div>
+                            <input type="date" class="add-box" name='enddate' value="" />
+                        </div>
+                    </div>
 
+                    <div class="container-married">
+                        <label for="complete">complete</label>
+                        <!-- <%if(query.complete=='1' ){ %>
+                            <div class="inline">
+                                <select name="married" id="married" placeholder="-select complete-">
+                                    <option value="" selected>Yes</option>
+                                    <option value="">Not</option>
+                                </select>
+                            </div>
+                            <% } else if (query.complete =='0' ){ %>
+                                <div class="inline">
+                                    <select name="married" id="married" placeholder="-select complete-">
+                                        <option value="1">Yes</option>
+                                        <option value="0" selected>Not Yet</option>
+                                    </select>
+                                </div>
+                                <% } else {%>
+                                    <div class="inline">
+                                        <select name="married" id="married" placeholder="-select complete-">
+                                            <option value="1">Yes</option>
+                                            <option value="0">Not Yet</option>
+                                        </select>
+                                    </div>
+                                    <% } %> -->
+                    </div>
+
+                    <div class="container-operation">
+                        <legend>Operation</legend>
+                        <!-- <% if(query.type_search=='OR' ) { %>
+                            <div class="operation-input">
+                                <div class="input-radio">
+                                    <input type="radio" id="OR" name="type_search" value="OR" checked= />OR
+                                    <input type="radio" id="AND" name="type_search" value="AND" />AND
+                                </div>
+                            </div>
+
+                            <% }else if(query.type_search=='AND' ) { %>
+                                <div class="operation-input" style="display: inline-block;">
+                                    <div class="input-radio">
+                                        <input type="radio" id="OR" name="type_search" value="OR" />OR
+                                        <input type="radio" id="AND" name="type_search" value="AND" checked>AND
+                                    </div>
+                                </div>
+
+                                <% }else { %>
+                                    <div class="operation-input" style="display: inline-block;">
+                                        <div class="input-radio">
+                                            <input type="radio" id="OR" name="type_search" value="OR" />OR
+                                            <input type="radio" id="AND" name="type_search" value="AND" />AND
+                                        </div>
+                                    </div>
+                                    <% } %> -->
+                    </div>
+                    <!-- trakhir submit mahh -->
+                    <div class="button-add">
+                        <button type="submit" class="add-submit">search</button>&nbsp;
+                        <a class="add-cancel" href="/">reset</a>
+                    </div>
+                </div>
+            </form>
+
+            <!-- search SELESAI -->
+            <!-- ini table -->
+            <div class="table-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Name</th>
+                            <th>Height</th>
+                            <th>Weight</th>
+                            <th>Birthdate</th>
+                            <th>Is Married</th>
+                            <th>action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <% data.forEach((siswa, index)=> { %> -->
+                            <tr>
+                                <td>
+                                    <!-- <%= index + offset + 1 %> -->
+                                </td>
+                                <td>
+                                    <!-- <%= siswa.name %> -->
+                                </td>
+                                <td>
+                                    <!-- <%= siswa.height %> -->
+                                </td>
+                                <td>
+                                    <!-- <%= siswa.weight %> -->
+                                </td>
+                                <td>
+                                    <!-- <%= siswa.birthdate %> -->
+                                </td>
+                                <td>
+                                    <!-- <%= siswa.married ? 'Yes' : 'Not Yet' %> -->
+                                </td>
+                                <td><a class="button-update" href="/edit/<%= siswa.id %>">Update</a>&nbsp;
+                                    <a class="button-delete" href="/delete/<%= siswa.id %>"
+                                        onclick="return confirmation('<%= siswa.name %>')">Delete</a>
+                                </td>
+                            </tr>
+                            <!-- <% }) %> -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="container-button">
+                <a href="/add" class="add-list">Add</a>
+                <div class="pagination">
+                    <!-- <% if(page !=1) { %>
+                        <a href="?page=<%= page - 1%>">&laquo;</a>
+                        <% } %>
+                            <% for(let i=1; i <=pages; i++){%>
+                                <a class="pagination<%= (page == i) ? ' active' : '' %>" href="/?page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+                                    <% if(page !=pages) { %>
+                                        <a href="?page=<%= Number(page) + 1%>">&raquo;</a>
+                                        <% } %> -->
+                </div>
+
+            </div>
+        </div>
 </body>
 
 </html>

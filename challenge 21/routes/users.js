@@ -1,19 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-const { Pool } = require('pg')
-
-const db = new Pool({
-  user: 'rizal',
-  host: 'localhost',
-  database: 'datadb',
-  password: '12345',
-  port: 5432,
-})
-
-
+module.exports = function (db) {
 router.get('/', (req, res) => { //create router read
-  const { page = 1, name, height, weight, startdate, enddate, married, type_search } = req.query
+  const { page = 1, title, deadline, startdate, enddate, complete, type_search } = req.query
 
   const limit = 3
   const offset = (page - 1) * 3
@@ -30,110 +20,90 @@ router.get('/', (req, res) => { //create router read
   }
 
   if (startdate && enddate) {
-    queries.push(`birthdate between ? and ?`)
+    queries.push(`deadline between $${params.length - 1} and $${params.length}`)
     params.push(startdate, enddate)
     count.push(startdate, enddate)
   } else if (startdate) {
-    queries.push('birthdate >= ?')
+    queries.push(`deadline >= $${params.length}`)
     params.push(startdate)
     count.push(startdate)
   } else if (enddate) {
-    queries.push('birthdate <= ?')
+    queries.push(`deadline <= $${params.length}`)
     params.push(enddate)
     count.push(enddate)
   };
 
-  if (married) {
-    queries.push(`married = ?`)
-    params.push(married)
-    count.push(married)
+  if (complete) {
+    queries.push(`complete = $${params.length}`)
+    params.push(complete)
+    count.push(complete)
   }
 
 
-  let sqlCount = 'SELECT COUNT (*) AS total FROM data'
-  let sql = 'SELECT * FROM data'
+  let sqlCount = 'SELECT COUNT (*) AS total FROM todos WHERE userid = $1'
+  let sql = 'SELECT * FROM todos WHERE userid = $1'
   if (queries.length > 0) {
-    sql += ` WHERE ${queries.join(` ${type_search} `)}`
-    sqlCount += ` WHERE ${queries.join(` ${type_search} `)}`
+    sql += ` AND ${queries.join(` ${type_search} `)}`
+    sqlCount += ` AND ${queries.join(` ${type_search} `)}`
+  }
+
+  if(sort) {
 
   }
 
-  sql += ` order by id desc limit ? offset ?`
   params.push(limit, offset)
+  sql += ` order by id desc limit $${params.length - 1} offset $${params.length}`
 
   db.query(sqlCount, (err, { rows: data }) => {
 
     const total = data.total
     const pages = Math.ceil(total / limit)
 
-    db.all(sql, params, (err, {rows}) => {
-      if (err) {
-        console.log(err)
-        res.send('Gagal dapat data')
-      }
-      res.render('list', { data: rows, query: req.query, pages, offset, page })
+    db.query(sql, params, (err, {rows : data}) => {
+      if (err) res.render(err)
+      else res.render('users/home', { data, query: req.query, pages, offset, page })
     })
   })
 })
 
 router.get('/add', (req, res) => {//create router add
-  res.render('add', { dataGet: [] })
+  res.render('users/add')
 })
 
 router.post('/add', (req, res) => {
-  let dataGet = {
-    name: req.body.name,
-    height: req.body.height,
-    weight: req.body.weight,
-    birthdate: req.body.birthdate,
-    married: req.body.married
-  };
-  const data = []
-  if (dataGet.married == 'true') {
-    dataGet.married = true;
-    data.push(dataGet)
-  } else {
-    dataGet.married = false;
-    data.push(dataGet)
-  }
-  db.run('INSERT INTO data (name, height, weight, birthdate, married) VALUES (?, ?, ?, ?, ?)', [dataGet.name, dataGet.height, dataGet.weight, dataGet.birthdate, dataGet.married], (err) => {
+  db.query('INSERT INTO todos (title, userid) VALUES ($1, $2)', [req.body.title, req.session.user.userid], (err) => {
     if (err) return res.send(err)
-    else res.redirect('/')
+    else res.redirect('/users')
   })
 })
 
 router.get('/delete/:index', (req, res) => {
   const index = req.params.index
-  db.run('DELETE FROM data WHERE id = ?', [index], (err) => {
+  db.query('DELETE FROM todos WHERE id = $1', [index], (err) => {
     if (err) return res.send(err)
-    else res.redirect('/')
+    else res.redirect('/users')
   })
 })
 
 
 router.get('/edit/:index', (req, res) => {
   const index = req.params.index
-  const item = db.get('SELECT * FROM data WHERE id = ?', [index], (err, rows) => {
+  const item = db.get('SELECT * FROM todos WHERE id = $1', [index], (err, rows) => {
     if (err) return res.send(err)
-    else res.render('edit', { item: rows })
+    else res.render('users/edit', { data, moment })
   })
 })
 
 router.post('/edit/:index', (req, res) => {
-  const dataBaru = {}
   const index = req.params.index
-  dataBaru[index] = {
-    name: req.body.name,
-    height: req.body.height,
-    weight: req.body.weight,
-    birthdate: req.body.birthdate,
-    married: req.body.married
-  };
-  db.run('UPDATE data SET name = ?, height = ?, weight = ?, birthdate = ?, married = ? WHERE id = ?', [req.body.name, req.body.height, req.body.weight, req.body.birthdate, req.body.married, index], (err, data) => {
+  const {title, deadline, complete} = req.body;
+  db.query('UPDATE todos SET title = $1, deadline = $2, complete = $3 WHERE id = $4', [title, deadline, Boolean(complete), index], (err, data) => {
     if (err) return res.send(err)
-    else res.redirect('/')
+    else res.redirect('/users')
   })
-}
-)
+})
 
-module.exports = router;
+
+
+return router;
+}
