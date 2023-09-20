@@ -10,7 +10,11 @@
 
 <body>
     <div class="container-list">
-        <h1>SQLite BREAD(Browse, Read, Edit, Add, Delete)</h1>
+        <div class="title-wrapper">
+            <h2>email</h2>
+            <h2>logout</h2>
+        </div>
+        <h1>BREADS (Browse, Read, Edit, Add, Delete, Sort)</h1>
         <div class="container-form">
             <!-- ini fitur search -->
             <form action="/" method="get" class="add-container">
@@ -18,18 +22,18 @@
                     <div class="inline">
                         <label for="name">title</label>
                         <div class="container-input">
-                            <input type="text" class="add-box" name="title" placeholder="insert your title" />
+                            <input type="text" class="add-box" name="title" placeholder="insert your title" value="<%= query.title %>" />
                         </div>
                     </div>
 
                     <div class="inline">
                         <label for="deadline">deadline</label>
                         <div class="container-input-birthdate">
-                            <input type="date" class="add-box" name='startdate' value="" />
+                            <input type="date" class="add-box" name='startdate' value="<%= query.startdate %>" />
                             <div class="sd">
                                 <p> s.d </p>
                             </div>
-                            <input type="date" class="add-box" name='enddate' value="" />
+                            <input type="date" class="add-box" name='enddate' value="<%= query.enddate %>" />
                         </div>
                     </div>
 

@@ -3,7 +3,7 @@ var router = express.Router();
 
 module.exports = function (db) {
 router.get('/', (req, res) => { //create router read
-  const { page = 1, title, deadline, startdate, enddate, complete, type_search } = req.query
+  const { page = 1, title, startdate, enddate, complete, type_search } = req.query
 
   const limit = 3
   const offset = (page - 1) * 3
@@ -43,20 +43,20 @@ router.get('/', (req, res) => { //create router read
   let sqlCount = 'SELECT COUNT (*) AS total FROM todos WHERE userid = $1'
   let sql = 'SELECT * FROM todos WHERE userid = $1'
   if (queries.length > 0) {
-    sql += ` AND ${queries.join(` ${type_search} `)}`
-    sqlCount += ` AND ${queries.join(` ${type_search} `)}`
+    sql += ` AND (${queries.join(` ${type_search} `)})`
+    sqlCount += ` AND (${queries.join(` ${type_search} `)})`
   }
 
-  if(sort) {
+  // if(sort) {
 
-  }
+  // }
 
   params.push(limit, offset)
   sql += ` order by id desc limit $${params.length - 1} offset $${params.length}`
 
-  db.query(sqlCount, (err, { rows: data }) => {
+  db.query('SELECT COUNT (*) AS total FROM todos', (err, { rows: data }) => {
 
-    const total = data.total
+    const total = data[0].total
     const pages = Math.ceil(total / limit)
 
     db.query(sql, params, (err, {rows : data}) => {
