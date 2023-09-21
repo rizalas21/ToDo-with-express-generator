@@ -1,159 +1,152 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const path = require('path')
-const { name } = require('ejs')
-const { start } = require('repl')
-const sqlite3 = require('sqlite3').verbose()
+var express = require('express');
+var router = express.Router();
+const { isLoggedIn } = require('../helpers/util');
+const moment = require('moment');
+const path = require('path');
+const fs = require('fs')
 
-const db = new sqlite3.Database(path.join(__dirname, 'db', 'data.db'))
+module.exports = function (db) {
+  router.get('/', isLoggedIn, async function (req, res, next) {
+    const { page = 1, title, strDate, endDate, complete, type_search, sort } = req.query;
+    const queries = [];
+    const params = [];
+    const paramscount = [];
+    const limit = 5;
+    const offset = (page - 1) * 5;
+    let typeSort;
+    const { rows: profil } = await db.query('SELECT * FROM "user" WHERE id = $1', [req.session.user.userid]);
 
-const app = express()
-const port = 3000
+    params.push(req.session.user.userid)
+    paramscount.push(req.session.user.userid)
 
-
-
-app.set('view engine', 'ejs')
-app.use(express.static('public'))
-
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-
-app.get('/', (req, res) => { //create router read
-    const { page = 1, name, height, weight, startdate, enddate, married, type_search} = req.query
-    
-    const limit = 3
-    const offset = (page - 1) * 3
-
-    const queries = []
-    const params = []
-
-    const count = []
-
-    if (name) {
-        queries.push(`name like '%' || ? || '%'`)
-        params.push(name)
-        count.push(name)
-    }
-
-    if (height) {
-        queries.push(`height = ?`)
-        params.push(height)
-        count.push(height)
-    }
-
-    if (weight) {
-        queries.push(`weight = ?`)
-        params.push(weight)
-        count.push(weight)
-    }
-
-    if (startdate && enddate) {
-        queries.push(`birthdate between ? and ?`)
-        params.push(startdate, enddate)
-        count.push(startdate, enddate)
-    } else if(startdate) {
-        queries.push('birthdate >= ?')
-        params.push(startdate)
-        count.push(startdate)
-    } else if(enddate) {
-        queries.push('birthdate <= ?')
-        params.push(enddate)
-        count.push(enddate)
+    if (title) {
+      params.push(title);
+      paramscount.push(title);
+      queries.push(`title like '%' || $${params.length} || '%'`);
     };
 
-    if (married) {
-        queries.push(`married = ?`)
-        params.push(married)
-        count.push(married)
+    if (strDate && endDate) {
+      params.push(strDate, endDate);
+      paramscount.push(strDate, endDate);
+      queries.push(`deadline BETWEEN $${params.length - 1} and $${params.length}`);
+    } else if (strDate) {
+      params.push(strDate);
+      paramscount.push(strDate);
+      queries.push(`deadline >= $${params.length}`);
+    } else if (endDate) {
+      params.push(endDate);
+      paramscount.push(endDate);
+      queries.push(`deadline <= $${params.length}`);
+    };
+
+    if (complete) {
+      params.push(JSON.parse(complete));
+      paramscount.push(JSON.parse(complete));
+      queries.push(`complete = $${params.length}`);
     }
 
-
-    let sqlCount = 'SELECT COUNT (*) AS total FROM data'
-    let sql = 'SELECT * FROM data'
+    let sqlcount = 'SELECT COUNT (*) AS total FROM todos WHERE userid = $1';
+    let sql = `SELECT * FROM todos WHERE userid = $1`;
     if (queries.length > 0) {
-        sql += ` WHERE ${queries.join(` ${type_search} `)}`
-        sqlCount += ` WHERE ${queries.join(` ${type_search} `)}`
-
-    } 
-    
-    sql += ` order by id desc limit ? offset ?`
-    params.push(limit, offset)
-
-    db.get(sqlCount, (err, data) => {
-
-        const total = data.total
-        const pages = Math.ceil(total / limit)
-
-        db.all(sql, params, (err, rows) => {
-            if (err) {
-                console.log(err)
-                res.send('Gagal dapat data')
-            }
-            res.render('list', { data: rows, query: req.query, pages, offset, page })
-        })
-    })
-})
-
-app.get('/add', (req, res) => {//create router add
-    res.render('add', {dataGet: []})
-})
-
-app.post('/add', (req, res) => {
-    let dataGet = {
-        name: req.body.name,
-        height: req.body.height,
-        weight: req.body.weight,
-        birthdate: req.body.birthdate,
-        married: req.body.married
-    };
-    const data = []
-    if (dataGet.married == 'true') {
-        dataGet.married = true;
-        data.push(dataGet)
-    } else {
-        dataGet.married = false;
-        data.push(dataGet)
+      sql += ` AND (${queries.join(` ${type_search} `)})`
+      sqlcount += ` AND (${queries.join(` ${type_search} `)})`
     }
-    db.run('INSERT INTO data (name, height, weight, birthdate, married) VALUES (?, ?, ?, ?, ?)', [dataGet.name, dataGet.height, dataGet.weight, dataGet.birthdate, dataGet.married], (err) => {
-        if (err) return res.send(err)
-        else res.redirect('/')
-    })
-})
 
-app.get('/delete/:index', (req, res) => {
+    if (sort) {
+      sql += ` ORDER BY ${sort}`
+      typeSort = sort.replace(' ', '+')
+    }
+
+    params.push(limit, offset);
+    sql += ` LIMIT $${params.length - 1} OFFSET $${params.length}`;
+
+    db.query(sqlcount, paramscount, (err, { rows: data }) => {
+      if (err) res.send(err)
+      else {
+        const total = data[0].total;
+        const pages = Math.ceil(total / limit);
+        db.query(sql, params, (err, { rows: data }) => {
+          if (err) res.render(err)
+          else res.render('user/list', { data, query: req.query, pages, offset, page, url: req.url, moment, typeSort, profil: profil[0] })
+        })
+      }
+    })
+  });
+
+  router.get('/add', isLoggedIn, (req, res) => {
+    res.render('user/add')
+  })
+
+  router.post('/add', isLoggedIn, (req, res) => {
+    db.query('INSERT INTO todos (title, userid) VALUES ($1, $2)',
+      [req.body.title, req.session.user.userid], (err) => {
+        if (err) res.send(err)
+        else res.redirect('/users')
+      })
+  })
+
+  router.get('/edit/:index', isLoggedIn, (req, res) => {
     const index = req.params.index
-    db.run('DELETE FROM data WHERE id = ?', [index], (err) => {
-        if (err) return res.send(err)
-        else res.redirect('/')
+    db.query('SELECT * FROM todos WHERE id = $1', [index], (err, { rows: data }) => {
+
+      if (err) res.send(err)
+      else res.render('user/sedit', { data, moment })
     })
-})
+  })
 
-
-app.get('/edit/:index', (req, res) => {
+  router.post('/edit/:index', isLoggedIn, (req, res) => {
     const index = req.params.index
-    const item = db.get('SELECT * FROM data WHERE id = ?', [index], (err, rows) => {
-        if (err) return res.send(err)
-        else res.render('edit', {item: rows})
-    })
-})
+    const { title, deadline, complete } = req.body;
+    db.query('UPDATE todos SET title = $1, complete = $2, deadline = $3 WHERE id = $4',
+      [title, Boolean(complete), deadline, index], (err, data) => {
+        if (err) res.send(err)
+        else res.redirect('/users')
+      })
+  })
 
-app.post('/edit/:index', (req, res) => {
-    const dataBaru = {}
+  router.get('/delete/:index', isLoggedIn, (req, res) => {
     const index = req.params.index
-    dataBaru[index] = {
-        name: req.body.name,
-        height: req.body.height,
-        weight: req.body.weight,
-        birthdate: req.body.birthdate,
-        married: req.body.married
-    };
-    db.run('UPDATE data SET name = ?, height = ?, weight = ?, birthdate = ?, married = ? WHERE id = ?', [req.body.name, req.body.height, req.body.weight, req.body.birthdate, req.body.married, index], (err, data) => {
-        if (err) return res.send(err)
-        else res.redirect('/')
+    db.query('DELETE FROM todos WHERE id = $1', [index], (err) => {
+      if (err) res.send(err)
+      else res.redirect('/users')
     })
+  })
+
+  router.get('/upload', isLoggedIn, function (req, res) {
+    res.render('user/upload', { prevAvatar: req.session.user.avatar })
+  })
+
+  router.post('/upload', isLoggedIn, async function (req, res) {
+    let avatar;
+    let uploadPath;
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('No files were uploaded.');
+    }
+
+    avatar = req.files.avatar;
+    let fileName = Date.now() + '_' + avatar.name
+    uploadPath = path.join(__dirname, '..', 'public', 'images', fileName);
+
+    avatar.mv(uploadPath, async function (err) {
+      if (err)
+        return res.status(500).send(err);
+      try {
+        const { rows: profil } = await db.query('SELECT * FROM "user" WHERE id = $1', [req.session.user.userid]);
+        if (profil[0].avatar) {
+          const filePath = path.join(__dirname, '..', 'public', 'images', profil[0].avatar);
+          try {fs.unlinkSync(filePath)} catch{
+            const { rows } = await db.query('UPDATE "user" SET avatar = $1 WHERE id = $2', [fileName, req.session.user.userid]);
+            res.redirect('/users');
+          }
+        }
+        const { rows } = await db.query('UPDATE "user" SET avatar = $1 WHERE id = $2', [fileName, req.session.user.userid]);
+        res.redirect('/users');
+      } catch {
+        res.send(err)
+      }
+    });
+  });
+
+  return router
 }
-)
-
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})

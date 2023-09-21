@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> BREAD (Browse, Read, Edit, Add, Delete, Sort) </title>
-    <link rel="stylesheet" href="/stylesheets/todos.css">
-</head>
-
-<body>
+<%- include('../partials/header.ejs') %>
     <div class="container-list">
         <div class="title-wrapper">
             <h2>email</h2>
@@ -22,7 +12,8 @@
                     <div class="inline">
                         <label for="name">title</label>
                         <div class="container-input">
-                            <input type="text" class="add-box" name="title" placeholder="insert your title" value="<%= query.title %>" />
+                            <input type="text" class="add-box" name="title" placeholder="insert your title"
+                                value="<%= query.title %>" />
                         </div>
                     </div>
 
@@ -46,7 +37,7 @@
                                     <option value="">Not</option>
                                 </select>
                             </div>
-                            <% } else if (query.complete =='0' ){ %>
+                            <% } else if (query.complete=='0' ){ %>
                                 <div class="inline">
                                     <select name="married" id="married" placeholder="-select complete-">
                                         <option value="1">Yes</option>
@@ -104,39 +95,31 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>No.</th>
-                            <th>Name</th>
-                            <th>Height</th>
-                            <th>Weight</th>
-                            <th>Birthdate</th>
-                            <th>Is Married</th>
-                            <th>action</th>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Deadline</th>
+                            <th>Complete</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% data.forEach((siswa, index)=> { %>
+                        <% data.forEach((todos, index)=> { %>
                             <tr>
                                 <td>
                                     <%= index + offset + 1 %>
                                 </td>
                                 <td>
-                                    <%= siswa.name %>
+                                    <%= todos.title %>
                                 </td>
                                 <td>
-                                    <%= siswa.height %>
+                                    <%= moment(todos.deadline).format('MMMM Do YYYY, h:mm:ss a');%>
                                 </td>
                                 <td>
-                                    <%= siswa.weight %>
+                                    <%= todos.complete ? 'Yes' : 'No' %>
                                 </td>
-                                <td>
-                                    <%= siswa.birthdate %>
-                                </td>
-                                <td>
-                                    <%= siswa.married ? 'Yes' : 'Not Yet' %>
-                                </td>
-                                <td><a class="button-update" href="/users/edit/<%= siswa.id %>">Update</a>&nbsp;
-                                    <a class="button-delete" href="/delete/<%= siswa.id %>"
-                                        onclick="return confirmation('<%= siswa.name %>')">Delete</a>
+                                <td><a class="button-update" href="/users/edit/<%= todos.id %>">Update</a>&nbsp;
+                                    <a class="button-delete" href="/delete/<%= todos.id %>"
+                                        onclick="return confirmation('<%= todos.title %>')">Delete</a>
                                 </td>
                             </tr>
                             <% }) %>
@@ -161,6 +144,5 @@
 
             </div>
         </div>
-</body>
 
-</html>
+        <%- include('../partials/footer.ejs') %>
