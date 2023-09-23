@@ -199,6 +199,7 @@ input#AND {
 }
 
 input#OR {
+  margin-left: 30px;
   margin-right: 10px;
 }
 
@@ -232,8 +233,10 @@ input#OR {
 
 .button-add {
   width: 100%;
-  display: flex;
+  display: inline-flex;
   justify-content: left;
+  height: 40px;
+  margin: 10px;
 }
 
 .table-list {
@@ -252,7 +255,7 @@ table {
 
 th{
   background-color: white;
-  padding-left: 25px;
+  padding-left: 10px;
   padding-bottom: 15px;
   padding-top: 10px;
   padding-right: 15px;
@@ -260,7 +263,7 @@ th{
 } 
 
 td {
-  padding-left: 50px;
+  padding-left: 20px;
   padding-right: 30px;
 }
 
@@ -300,6 +303,7 @@ tr:nth-child(even) {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  padding: 10px;
 }
 
 .add-list {
@@ -340,4 +344,20 @@ tr:nth-child(even) {
 
 a.pagination {
   margin: 0px;
+}
+
+th.deadline {
+ padding-left: 100px;
+}
+
+th.action {
+  padding-left: 30px;
+}
+
+th.id {
+  padding-left: 20px;
+}
+
+th.title {
+  padding-left: 25px;
 }
