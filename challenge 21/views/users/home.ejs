@@ -122,9 +122,11 @@
                                 <td>
                                     <%= todos.complete ? 'Yes' : 'No' %>
                                 </td>
-                                <td><a class="add-list" href="/users/edit/<%= todos.id %>"><i class="fa-solid fa-pen" style="color: #ffffff;"></i></a>&nbsp;
+                                <td><a class="add-list" href="/users/edit/<%= todos.id %>"><i class="fa-solid fa-pen"
+                                            style="color: #ffffff;"></i></a>&nbsp;
                                     <a class="btn btn-danger" href="/delete/<%= todos.id %>"
-                                        onclick="return confirmation('<%= todos.title %>')"><i class="fa-solid fa-trash" style="color: #ffffff;"></i></a>
+                                        onclick="return confirmation('<%= todos.title %>')"><i class="fa-solid fa-trash"
+                                            style="color: #ffffff;"></i></a>
                                 </td>
                             </tr>
                             <% }) %>

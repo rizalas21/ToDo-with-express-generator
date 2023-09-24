@@ -2,20 +2,21 @@ var express = require('express');
 var router = express.Router();
 const moment = require('moment')
 const path = require('path')
-const fs = require('fs')
+const {isLoggedIn} = require('../helpers/util')
 
 module.exports = function (db) {
-  router.get('/', async(req, res) => { //create router read
+  router.get('/', isLoggedIn, async (req, res) => { //create router read
     const { page = 1, title, startdate, enddate, complete, type_search } = req.query
     const limit = 5
     const offset = (page - 1) * 5
     const queries = []
     const params = []
     const count = []
-    const { rows: profile } = await db.query('SELECT * FROM users WHERE id = 1')
+    const { rows: profile } = await db.query('SELECT * FROM users WHERE id = 1', //[req.session.users.userid]
+    )
 
-    params.push(profile[0].id)
-    count.push(profile)
+    // params.push[]
+    // count.push[]
 
   if (title) {
       params.push(title)

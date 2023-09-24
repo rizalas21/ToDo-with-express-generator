@@ -3,9 +3,10 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session')
+var { Pool } = require('pg')
 // var flash = require('connect-flash')
 
-var { Pool } = require('pg')
 
 const pool = new Pool({
   user: 'rizal',
@@ -15,7 +16,7 @@ const pool = new Pool({
   port: 5432,
 })
 
-var indexRouter = require('./routes/index')(pool);
+var indexRouter = require('./routes/index')(pool); //immediately call
 var usersRouter = require('./routes/users')(pool);
 
 var app = express();
@@ -30,6 +31,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
+
+app.use(session({
+  secret: 'rubicamp',
+  resave: false,
+  saveUninitialized: true
+}))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
