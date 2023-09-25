@@ -1,8 +1,9 @@
 <%- include('../partials/header.ejs') %>
     <div class="container-list">
+        <%- include('../partials/alert') %>
         <div class="title-wrapper">
             <a href="/users/upload">
-                <h2>email</h2>
+                <h2>Welcome, <%= user.email %></h2>
             </a>
             <h2>logout</h2>
         </div>

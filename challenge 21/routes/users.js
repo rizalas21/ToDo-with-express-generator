@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const moment = require('moment')
 const path = require('path')
-const {isLoggedIn} = require('../helpers/util')
+const { isLoggedIn } = require('../helpers/util')
 
 module.exports = function (db) {
   router.get('/', isLoggedIn, async (req, res) => { //create router read
@@ -18,7 +18,7 @@ module.exports = function (db) {
     // params.push[]
     // count.push[]
 
-  if (title) {
+    if (title) {
       params.push(title)
       count.push(title)
       queries.push(`title like '%' || $${params.length} || '%'`)
@@ -66,7 +66,17 @@ module.exports = function (db) {
 
       db.query(sql, params, (err, { rows: data }) => {
         if (err) res.render(err)
-        else res.render('users/home', { data, query: req.query, pages, offset, page, moment })
+        else res.render('users/home', {
+          data: rows,
+          query: req.query,
+          pages,
+          offset,
+          page,
+          moment,
+          user: req.session.user,
+          failedInfo: req.flash('failedInfo'),
+           successinfo: req.flash('successInfo')
+        })
       })
     })
   })
@@ -93,7 +103,7 @@ module.exports = function (db) {
 
   router.get('/edit/:index', (req, res) => {
     const index = req.params.index
-    const item = db.query('SELECT * FROM todos WHERE id = $1', [index], (err, {rows: data}) => {
+    const item = db.query('SELECT * FROM todos WHERE id = $1', [index], (err, { rows: data }) => {
       if (err) return res.send(err)
       else res.render('users/edit', { data, moment })
     })
