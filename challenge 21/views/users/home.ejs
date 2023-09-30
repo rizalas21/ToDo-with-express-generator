@@ -1,13 +1,23 @@
 <%- include('../partials/header.ejs') %>
     <div class="container-list">
-        <%- include('../partials/alert') %>
         <div class="title-wrapper">
-            <a href="/users/upload">
-                <h2>Welcome, <%= user.email %></h2>
-            </a>
-            <h2>logout</h2>
+            <div class="profil">
+                <a style="width: 20%;" href="/users/upload/<%= user.userid %>"">
+                <img src=" <%=user.avatar? `/images/${user.avatar}` : `/images/default-avatar.jpg` %>" width="70"
+                    height="70"
+                    alt="Not Source" class="rounded-circle" style="margin-left: 0px;" >
+                </a>
+                <h2 class="h2-email">
+                    <%= user.email %>
+                </h2>
+            </div>
+            <div class="a-logout">
+                <a href="/logout" class="btn btn-secondary"><i class="fa-solid fa-right-from-bracket"
+                        style="color: #ffffff;"></i>Sign Out</a>
+            </div>
         </div>
-        <h1>BREADS (Browse, Read, Edit, Add, Delete, Sort)</h1>
+
+        <h1 class="h1-title">BREADS (Browse, Read, Edit, Add, Delete, Sort)</h1>
         <div class="container-form">
             <!-- ini fitur search -->
             <form action="/users" method="get" class="add-container">
@@ -101,8 +111,17 @@
                 <table>
                     <thead>
                         <tr>
-                            <th class="id">Id</th>
-                            <th class="title">Title</th>
+                            <th class="id">No.</th>
+
+                            <th class="title">
+                                <div class="Sort">
+                                    <a href="<%= url.includes(`&sort=${typeSort}`) ?  %>">
+                                        <i class="fa-solid fa-caret-up"></i>
+                                    </a>
+                                    Title
+                                </div>
+                            </th>
+
                             <th class="deadline">Deadline</th>
                             <th class="complete">Complete</th>
                             <th class="action">Action</th>
@@ -123,8 +142,8 @@
                                 <td>
                                     <%= todos.complete ? 'Yes' : 'No' %>
                                 </td>
-                                <td><a class="add-list" href="/users/edit/<%= todos.id %>"><i class="fa-solid fa-pen"
-                                            style="color: #ffffff;"></i></a>&nbsp;
+                                <td><a class="btn btn-success" href="/users/edit/<%= todos.id %>"><i
+                                            class="fa-solid fa-pen" style="color: #ffffff;"></i></a>&nbsp;
                                     <a class="btn btn-danger" href="/delete/<%= todos.id %>"
                                         onclick="return confirmation('<%= todos.title %>')"><i class="fa-solid fa-trash"
                                             style="color: #ffffff;"></i></a>
@@ -143,12 +162,13 @@
                         <a href="?page=<%= page - 1%>">&laquo;</a>
                         <% } %>
                             <% for(let i=1; i <=pages; i++){%>
-                                <a class="pagination<%= (page == i) ? ' active' : '' %>" href="/?page=<%= i %>">
+                                <a class="page-link<%= (page == i) ? ' active' : '' %>" href="/users/?page=<%= i %>">
+                                    <!-- pagination -->
                                     <%= i %>
                                 </a>
                                 <% } %>
                                     <% if(page !=pages) { %>
-                                        <a href="?page=<%= Number(page) + 1%>">&raquo;</a>
+                                        <a class="page-link" href="/users/?page=<%= Number(page) + 1%>">&raquo;</a>
                                         <% } %>
                 </div>
 

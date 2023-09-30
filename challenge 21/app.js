@@ -6,6 +6,7 @@ var logger = require('morgan');
 var session = require('express-session')
 var flash = require('connect-flash')
 var { Pool } = require('pg')
+const fileUpload = require('express-fileupload');
 
 
 const pool = new Pool({
@@ -38,6 +39,7 @@ app.use(session({
   saveUninitialized: true
 }))
 
+app.use(fileUpload());
 app.use(flash());
 
 app.use('/', indexRouter);

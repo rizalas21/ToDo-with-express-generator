@@ -12,11 +12,11 @@ module.exports = function (db) {
     const queries = []
     const params = []
     const count = []
-    const { rows: profile } = await db.query('SELECT * FROM users WHERE id = 1', //[req.session.users.userid]
-    )
+    // let typeSort;
+    const { rows: data } = await db.query('SELECT * FROM users WHERE id = $1', [req.session.user.userid])
 
-    // params.push[]
-    // count.push[]
+    params.push[params.push(req.session.user.userid)]
+    count.push[req.session.user.userid]
 
     if (title) {
       params.push(title)
@@ -53,11 +53,14 @@ module.exports = function (db) {
     }
 
     // if(sort) {
-
+    //   sql += ` ORDER BY ${sort}`
+    //   typeSort = sort.replace(' ', '+')
     // }
 
     params.push(limit, offset)
     sql += ` order by id desc limit $${params.length - 1} offset $${params.length}`
+    console.log(sql)
+    console.log(params)
 
     db.query('SELECT COUNT (*) AS total FROM todos', (err, { rows: data }) => {
 
@@ -67,15 +70,17 @@ module.exports = function (db) {
       db.query(sql, params, (err, { rows: data }) => {
         if (err) res.render(err)
         else res.render('users/home', {
-          data: rows,
+          data,
           query: req.query,
           pages,
           offset,
           page,
+          url: req.url,
           moment,
+          // typeSort,
           user: req.session.user,
           failedInfo: req.flash('failedInfo'),
-           successinfo: req.flash('successInfo')
+          successInfo: req.flash('successInfo')
         })
       })
     })
@@ -85,10 +90,10 @@ module.exports = function (db) {
     res.render('users/add')
   })
 
-  router.post('/add', (req, res) => {
+  router.post('/add', isLoggedIn, (req, res) => {
     db.query('INSERT INTO todos (title, userid) VALUES ($1, $2)', [req.body.title, req.session.user.userid], (err) => {
       if (err) return res.send(err)
-      else res.redirect('/')
+      else res.redirect('/users')
     })
   })
 
@@ -101,21 +106,52 @@ module.exports = function (db) {
   })
 
 
-  router.get('/edit/:index', (req, res) => {
+  router.get('/edit/:index', isLoggedIn, (req, res) => {
     const index = req.params.index
-    const item = db.query('SELECT * FROM todos WHERE id = $1', [index], (err, { rows: data }) => {
+    db.query('SELECT * FROM todos WHERE id = $1', [index], (err, { rows: item }) => {
       if (err) return res.send(err)
-      else res.render('users/edit', { data, moment })
+      else res.render('users/edit', { moment, item, user: req.session.user })
     })
   })
 
   router.post('/edit/:index', (req, res) => {
     const index = req.params.index
     const { title, deadline, complete } = req.body;
-    db.query('UPDATE todos SET title = $1, deadline = $2, complete = $3 WHERE id = $4', [title, deadline, Boolean(complete), index], (err, data) => {
-      if (err) return res.send(err)
-      else res.redirect('/users')
-    })
+    db.query('UPDATE todos SET title = $1, deadline = $2, complete = $3 WHERE id = $4',
+      [title, deadline, Boolean(complete), index], (err, data) => {
+        if (err) return res.send(err)
+        else res.redirect('/users')
+      })
+  })
+
+  router.get('/upload/:index', isLoggedIn, (req, res) => {
+    res.render('users/upload', { avatar: req.session.user.avatar })
+  })
+
+  router.post('/upload/:index', isLoggedIn, (req, res) => {
+    let avatar;
+    let uploadPath;
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('No files were uploaded.');
+    }
+
+    avatar = req.files.avatar;
+    let fileName = Date.now() + '-' + avatar.name;
+
+    uploadPath = path.join(__dirname, '..', 'public', 'images', fileName);
+
+    avatar.mv(uploadPath, async function (err) {
+      if (err)
+        return res.status(500).send(err);
+      // blablablabla 
+      try {
+        const { rows } = await db.query('UPDATE users SET avatar = $1 WHERE id = $2', [fileName, req.session.user.userid])
+        res.redirect('/users')
+      } catch (err) {
+        res.send(err)
+      }
+    });
   })
 
   return router;

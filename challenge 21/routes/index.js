@@ -6,7 +6,7 @@ const saltRounds = 10;
 module.exports = function (db) {
 
   router.get('/', function (req, res, next) {
-    res.render('login', { failedInfo: req.flash('failedInfo'), successinfo: req.flash('successInfo') });
+    res.render('login', { failedInfo: req.flash('failedInfo'), successInfo: req.flash('successInfo') });
   });
 
   router.post('/', async function (req, res, next) {
@@ -25,7 +25,7 @@ module.exports = function (db) {
         return res.redirect('/')
       }
 
-      req.session.user = { email: users[0].email }
+      req.session.user = { email: users[0].email, userid: users[0].id, avatar: users[0].avatar }
       req.flash('successInfo', 'Anda Berhasil Login')
 
       res.redirect('/users')

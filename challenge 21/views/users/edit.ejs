@@ -1,25 +1,28 @@
 <%- include('../partials/header.ejs') %>
     <div class="container-edit">
         <h1>Updating Data</h1>
-        <form action="" class="form-edit">
+        <form action="" method="post" class="form-edit">
             <div class="inline-edit">
                 <label for="title-edit">Title</label>
-                <input class="input-edit" type="text" name="title-edit" id="title-edit">
+                <input class="input-edit" type="text" name="title" id="title-edit" value="<%= item[0].title %>" required>
             </div>
 
             <div class="inline-edit">
                 <label for="deadline-edit">Deadline</label>
-                <input class="input-edit" type="date" name="deadline-edit" id="deadline-edit">
+                <input class="input-edit" type="date" name="deadline" id="deadline-edit"
+                    value="<%= moment(item[0].deadline).format('YYYY-MM-DD') %>" required>
             </div>
 
             <div class="inline-complete-edit">
                 <label for="complete">Complete</label>
-                <input class="input-complete-edit" type="checkbox" name="complete-edit" id="complete-edit">
+                <div class="input-complete-edit">
+                    <input type="checkbox" name="complete" id="complete-edit">done
+                </div>
             </div>
 
             <div class="save-cancel-edit">
                 <div class="button-save">
-                    <button type="button" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
                 </div>
                 <div>
                     <a href="/users" class="btn btn-warning"><i class="fa-solid fa-rotate-left"></i></a>
