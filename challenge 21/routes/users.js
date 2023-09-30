@@ -6,13 +6,13 @@ const { isLoggedIn } = require('../helpers/util')
 
 module.exports = function (db) {
   router.get('/', isLoggedIn, async (req, res) => { //create router read
-    const { page = 1, title, startdate, enddate, complete, type_search } = req.query
+    const { page = 1, title, startdate, enddate, complete, type_search, sort } = req.query
     const limit = 5
     const offset = (page - 1) * 5
     const queries = []
     const params = []
     const count = []
-    // let typeSort;
+    let typeSort;
     const { rows: data } = await db.query('SELECT * FROM users WHERE id = $1', [req.session.user.userid])
 
     params.push[params.push(req.session.user.userid)]
@@ -52,10 +52,10 @@ module.exports = function (db) {
       sqlCount += ` AND (${queries.join(` ${type_search} `)})`
     }
 
-    // if(sort) {
-    //   sql += ` ORDER BY ${sort}`
-    //   typeSort = sort.replace(' ', '+')
-    // }
+    if (sort) {
+      sql += ` ORDER BY ${sort}`
+      typeSort = sort.replace(' ', '+')
+    }
 
     params.push(limit, offset)
     sql += ` order by id desc limit $${params.length - 1} offset $${params.length}`
@@ -77,7 +77,7 @@ module.exports = function (db) {
           page,
           url: req.url,
           moment,
-          // typeSort,
+          typeSort,
           user: req.session.user,
           failedInfo: req.flash('failedInfo'),
           successInfo: req.flash('successInfo')

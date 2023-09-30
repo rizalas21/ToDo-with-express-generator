@@ -115,7 +115,9 @@
 
                             <th class="title">
                                 <div class="Sort">
-                                    <a href="<%= url.includes(`&sort=${typeSort}`) ?  %>">
+                                    <a href="<%= url.includes(`&sort=${typeSort}`) ?
+                                     ('/users'+url.replace(`&sort=${typeSort}`, `&sort=title+ASC`)) 
+                                     : `/users/?${url.slice(2) + '&'}sort=title+ASC` %>">
                                         <i class="fa-solid fa-caret-up"></i>
                                     </a>
                                     Title
