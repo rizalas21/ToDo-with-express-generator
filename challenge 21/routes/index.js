@@ -59,7 +59,7 @@ module.exports = function (db) {
       res.redirect('/')
     } catch (e) {
       console.log(e)
-      res.redirect('/')
+      res.redirect('/register')
     }
 
   })

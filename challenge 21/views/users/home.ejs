@@ -43,25 +43,28 @@
 
                     <div class="container-married">
                         <label for="complete">complete</label>
-                        <%if(query.complete=='1' ){ %>
+                        <%if(query.complete=='true' ){ %>
                             <div class="inline">
-                                <select name="married" id="married" placeholder="-select complete-">
-                                    <option value="" selected>Yes</option>
-                                    <option value="">Not</option>
+                                <select name="complete" id="complete" placeholder="-select complete-">
+                                    <option disabled>-select complete-</option>
+                                    <option value="true" selected>Done</option>
+                                    <option value="false">Not</option>
                                 </select>
                             </div>
-                            <% } else if (query.complete=='0' ){ %>
+                            <% } else if (query.complete=='false' ){ %>
                                 <div class="inline">
-                                    <select name="married" id="married" placeholder="-select complete-">
-                                        <option value="1">Yes</option>
-                                        <option value="0" selected>Not Yet</option>
+                                    <select name="complete" id="complete" placeholder="-select complete-">
+                                        <option disabled>-select complete-</option>
+                                        <option value="true">Done</option>
+                                        <option value="false" selected>Not Yet</option>
                                     </select>
                                 </div>
                                 <% } else {%>
                                     <div class="inline">
-                                        <select name="married" id="married" placeholder="-select complete-">
-                                            <option value="1">Yes</option>
-                                            <option value="0">Not Yet</option>
+                                        <select name="complete" id="complete" placeholder="-select complete-">
+                                            <option disabled selected>-select complete-</option>
+                                            <option value="true">Done</option>
+                                            <option value="false">Not Yet</option>
                                         </select>
                                     </div>
                                     <% } %>
@@ -114,18 +117,52 @@
                             <th class="id">No.</th>
 
                             <th class="title">
-                                <div class="Sort">
-                                    <a href="<%= url.includes(`&sort=${typeSort}`) ?
-                                     ('/users'+url.replace(`&sort=${typeSort}`, `&sort=title+ASC`)) 
-                                     : `/users/?${url.slice(2) + '&'}sort=title+ASC` %>">
-                                        <i class="fa-solid fa-caret-up"></i>
-                                    </a>
-                                    Title
+                                <div class="sort-wrapper">
+                                    <div class="sort">
+                                        <a class="sort-button"
+                                            href="<%= url.includes(`&sort=${typeSort}`) ? ('/users'+url.replace(`&sort=${typeSort}`, `&sort=title+ASC`)) : `/users/?${url.slice(2) + '&'}sort=title+ASC` %>">
+                                            <i class="fa-solid fa-caret-up"></i>
+                                        </a>
+                                        <a class="sort-button"
+                                            href="<%= url.includes(`&sort=${typeSort}`) ? ('/users'+url.replace(`&sort=${typeSort}`, `&sort=title+DESC`)) : `/users/?${url.slice(2) + '&'}sort=title+DESC` %>">
+                                            <i class="fa-solid fa-caret-down"></i>
+                                        </a>
+                                    </div>
+                                    &nbsp;Title
                                 </div>
                             </th>
 
-                            <th class="deadline">Deadline</th>
-                            <th class="complete">Complete</th>
+                            <th class="deadline">
+                                <div class="sort-wrapper">
+                                    <div class="sort">
+                                        <a class="sort-button"
+                                            href="<%= url.includes(`&sort=${typeSort}`) ? ('/users'+url.replace(`&sort=${typeSort}`, `&sort=deadline+ASC`)) : `/users/?${url.slice(2) + '&'}sort=deadline+ASC` %>">
+                                            <i class="fa-solid fa-caret-up"></i>
+                                        </a>
+                                        <a class="sort-button"
+                                            href="<%= url.includes(`&sort=${typeSort}`) ? ('/users'+url.replace(`&sort=${typeSort}`, `&sort=deadline+DESC`)) : `/users/?${url.slice(2) + '&'}sort=deadline+DESC` %>">
+                                            <i class="fa-solid fa-caret-down"></i>
+                                        </a>
+                                    </div>
+                                    &nbsp;deadline
+                                </div>
+                            </th>
+                            <th class="complete">
+                                <div class="sort-wrapper">
+                                    <div class="sort">
+                                        <a class="sort-button"
+                                            href="<%= url.includes(`&sort=${typeSort}`) ? ('/users'+url.replace(`&sort=${typeSort}`, `&sort=complete+ASC`)) : `/users/?${url.slice(2) + '&'}sort=complete+ASC` %>">
+                                            <i class="fa-solid fa-caret-up"></i>
+                                        </a>
+                                        <a class="sort-button"
+                                            href="<%= url.includes(`&sort=${typeSort}`) ? ('/users'+url.replace(`&sort=${typeSort}`, `&sort=complete+DESC`)) : `/users/?${url.slice(2) + '&'}sort=complete+DESC` %>">
+                                            <i class="fa-solid fa-caret-down"></i>
+                                        </a>
+                                    </div>
+                                    &nbsp;Complete
+                                </div>
+
+                            </th>
                             <th class="action">Action</th>
                         </tr>
                     </thead>

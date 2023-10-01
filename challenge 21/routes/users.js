@@ -3,6 +3,7 @@ var router = express.Router();
 const moment = require('moment')
 const path = require('path')
 const { isLoggedIn } = require('../helpers/util')
+const fs = require('fs')
 
 module.exports = function (db) {
   router.get('/', isLoggedIn, async (req, res) => { //create router read
@@ -39,9 +40,9 @@ module.exports = function (db) {
     };
 
     if (complete) {
-      queries.push(`complete = $${params.length}`)
-      params.push(complete)
-      count.push(complete)
+      params.push(JSON.parse(complete))
+      count.push(JSON.parse(complete))
+      queries.push(`complete = $${params.length}`)  
     }
 
 
@@ -58,16 +59,14 @@ module.exports = function (db) {
     }
 
     params.push(limit, offset)
-    sql += ` order by id desc limit $${params.length - 1} offset $${params.length}`
-    console.log(sql)
-    console.log(params)
+    sql += ` limit $${params.length - 1} offset $${params.length}`
 
     db.query('SELECT COUNT (*) AS total FROM todos', (err, { rows: data }) => {
 
       const total = data[0].total
       const pages = Math.ceil(total / limit)
 
-      db.query(sql, params, (err, { rows: data }) => {
+      db.query(sql, params, (err, {rows: data }) => {
         if (err) res.render(err)
         else res.render('users/home', {
           data,
@@ -86,7 +85,7 @@ module.exports = function (db) {
     })
   })
 
-  router.get('/add', (req, res) => {//create router add
+  router.get('/add', (req, res) => { //create router add
     res.render('users/add')
   })
 
