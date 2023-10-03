@@ -42,7 +42,7 @@ module.exports = function (db) {
     if (complete) {
       params.push(JSON.parse(complete))
       count.push(JSON.parse(complete))
-      queries.push(`complete = $${params.length}`)  
+      queries.push(`complete = $${params.length}`)
     }
 
 
@@ -58,15 +58,18 @@ module.exports = function (db) {
       typeSort = sort.replace(' ', '+')
     }
 
-    params.push(limit, offset)
-    sql += ` limit $${params.length - 1} offset $${params.length}`
 
-    db.query('SELECT COUNT (*) AS total FROM todos', (err, { rows: data }) => {
+    console.log(sqlCount, params)
+    db.query(sqlCount, params, (err, { rows: data}) => {
 
       const total = data[0].total
       const pages = Math.ceil(total / limit)
 
-      db.query(sql, params, (err, {rows: data }) => {
+
+      params.push(limit, offset)
+      sql += ` limit $${params.length - 1} offset $${params.length}`
+
+      db.query(sql, params, (err, { rows: data }) => {
         if (err) res.render(err)
         else res.render('users/home', {
           data,

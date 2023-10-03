@@ -127,23 +127,24 @@
             <h1 class="h3 mb-3 fw-normal" style="text-align: center;">Please sign up</h1>
 
             <div class="form-floating">
-                <input type="email" class="form-control" id="floatingInput" name="email" placeholder="name@example.com">
+                <input type="email" class="form-control" id="floatingInput" name="email" placeholder="name@example.com" required>
                 <label for="floatingInput">Email address</label>
             </div>
             <div class="form-floating">
                 <input type="password" class="form-control" id="floatingPassword" name="password"
-                    placeholder="Password">
+                    placeholder="Password" required>
                 <label for="floatingPassword">Password</label>
             </div>
-            <div class="form-floating" style="margin-top: auto;">
+            <div class="form-floating" style="margin-top:   auto;">
                 <input type="password" class="form-control" id="floatingPassword" name="repassword"
-                    placeholder="RetypePassword">
+                    placeholder="RetypePassword" required>
                 <label for="floatingPassword">Retype Password</label>
             </div>
 
             <button class="btn btn-primary w-100 py-2" type="submit">Sign Up</button>
             <p>doesn't have account, please <a href="/">Sign In</a></p>
             <p class="mt-5 mb-3 text-body-secondary" style="text-align: center;">© 2017–2023</p>
+            <%- include('./partials/alert.ejs') %>
         </form>
     </main>
 </body>
