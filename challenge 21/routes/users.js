@@ -96,7 +96,7 @@ module.exports = function (db) {
     })
   })
 
-  router.get('/delete/:index', (req, res) => {
+  router.get('/delete/:index', isLoggedIn, (req, res) => {
     const index = req.params.index
     db.query('DELETE FROM todos WHERE id = $1', [index], (err) => {
       if (err) return res.send(err)
@@ -113,7 +113,7 @@ module.exports = function (db) {
     })
   })
 
-  router.post('/edit/:index', (req, res) => {
+  router.post('/edit/:index', isLoggedIn, (req, res) => {
     const index = req.params.index
     const { title, deadline, complete } = req.body;
     db.query('UPDATE todos SET title = $1, deadline = $2, complete = $3 WHERE id = $4',
@@ -143,7 +143,6 @@ module.exports = function (db) {
     avatar.mv(uploadPath, async function (err) {
       if (err)
         return res.status(500).send(err);
-      // blablablabla 
       try {
         const { rows } = await db.query('UPDATE users SET avatar = $1 WHERE id = $2', [fileName, req.session.user.userid])
         res.redirect('/users')

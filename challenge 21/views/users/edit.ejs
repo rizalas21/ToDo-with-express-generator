@@ -4,7 +4,8 @@
         <form action="" method="post" class="form-edit">
             <div class="inline-edit">
                 <label for="title-edit">Title</label>
-                <input class="input-edit" type="text" name="title" id="title-edit" value="<%= item[0].title %>" required>
+                <input class="input-edit" type="text" name="title" id="title-edit" value="<%= item[0].title %>"
+                    required>
             </div>
 
             <div class="inline-edit">
@@ -16,7 +17,8 @@
             <div class="inline-complete-edit">
                 <label for="complete">Complete</label>
                 <div class="input-complete-edit">
-                    <input type="checkbox" name="complete" id="complete-edit">done
+                    <input type="checkbox" name="complete" id="complete-edit" <%=item[0].complete ? 'checked' : '' %>
+                    >Done
                 </div>
             </div>
 

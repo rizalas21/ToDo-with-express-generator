@@ -168,27 +168,97 @@
                     </thead>
                     <tbody>
                         <% data.forEach((todos, index)=> { %>
-                            <tr>
-                                <td>
-                                    <%= index + offset + 1 %>
-                                </td>
-                                <td>
-                                    <%= todos.title %>
-                                </td>
-                                <td>
-                                    <%= moment(todos.deadline).format('MMMM Do YYYY, h:mm:ss a');%>
-                                </td>
-                                <td>
-                                    <%= todos.complete ? 'Yes' : 'No' %>
-                                </td>
-                                <td><a class="btn btn-success" href="/users/edit/<%= todos.id %>"><i
-                                            class="fa-solid fa-pen" style="color: #ffffff;"></i></a>&nbsp;
-                                    <a class="btn btn-danger" href="/delete/<%= todos.id %>"
-                                        onclick="return confirmation('<%= todos.title %>')"><i class="fa-solid fa-trash"
-                                            style="color: #ffffff;"></i></a>
-                                </td>
-                            </tr>
-                            <% }) %>
+                            <% if(todos.complete==false && moment(new Date())> todos.deadline) { %>
+                                <tr>
+                                    <td class="bg-danger">
+                                        <%= index + offset + 1 %>
+                                    </td>
+                                    <td class="bg-danger">
+                                        <%= todos.title %>
+                                    </td>
+                                    <td class="bg-danger">
+                                        <%= moment(todos.deadline).format('MMMM Do YYYY, h:mm:ss a');%>
+                                    </td>
+                                    <td class="bg-danger">
+                                        <%= todos.complete ? 'Yes' : 'No' %>
+                                    </td>
+                                    <td><a class="btn btn-success" href="/users/edit/<%= todos.id %>"><i
+                                                class="fa-solid fa-pen" style="color: #ffffff;"></i></a>&nbsp;
+                                        <a class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal"><i class="fa-solid fa-trash"
+                                                style="color: #ffffff;"></i></a>
+                                    </td>
+                                    <div class="modal fade" id="exampleModal" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete
+                                                        Confirmation
+                                                    </h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>apakah kamu yakin menghapus data '<%= todos.title %>' ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">No</button>
+                                                    <a href="/users/delete/<%= todos.id %>" type="button"
+                                                        class="btn btn-warning">Yes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tr>
+                                <% } else { %>
+                                    <tr>
+                                        <td>
+                                            <%= index + offset + 1 %>
+                                        </td>
+                                        <td>
+                                            <%= todos.title %>
+                                        </td>
+                                        <td>
+                                            <%= moment(todos.deadline).format('MMMM Do YYYY, h:mm:ss a');%>
+                                        </td>
+                                        <td>
+                                            <%= todos.complete ? 'Yes' : 'No' %>
+                                        </td>
+                                        <td><a class="btn btn-success" href="/users/edit/<%= todos.id %>"><i
+                                                    class="fa-solid fa-pen" style="color: #ffffff;"></i></a>&nbsp;
+                                            <a class="btn btn-danger" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal"><i class="fa-solid fa-trash"
+                                                    style="color: #ffffff;"></i></a>
+                                        </td>
+                                        <div class="modal fade" id="exampleModal" tabindex="-1"
+                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete
+                                                            Confirmation
+                                                        </h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>apakah kamu yakin menghapus data '<%= todos.title %>' ?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">No</button>
+                                                        <a href="/users/delete/<%= todos.id %>" type="button"
+                                                            class="btn btn-warning">Yes</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                    <% } %>
+
+                                        <% }) %>
                     </tbody>
                 </table>
             </div>
